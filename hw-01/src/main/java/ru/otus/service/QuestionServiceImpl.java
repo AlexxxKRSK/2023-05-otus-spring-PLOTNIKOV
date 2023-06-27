@@ -10,15 +10,17 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionDao questionDao;
 
+    private final OutputService outputService;
+
     @Override
     public void printQuestions() {
         List<Question> questionList = questionDao.getQuestions();
         for (var question : questionList) {
-            System.out.println(question.getValue());
+            outputService.outputString(question.getValue());
             for (var answer : question.getAnswers()) {
-                System.out.println("\t* " + answer.getValue());
+                outputService.outputString("\t* " + answer.getValue());
             }
-            System.out.println();
+            outputService.outputString("");
         }
     }
 }
