@@ -36,20 +36,31 @@ public class CsvQuestionDao implements QuestionDao {
             List<String> csvLines = reader.lines().toList();
             List<Question> questionList = new ArrayList<>();
             for (int i = 1; i < csvLines.size(); i++) {
-                String[] parsedLine = csvLines.get(i).split(DELIMITER);
-                Question question = new Question();
-                question.setValue(parsedLine[0]);
-                Set<Answer> answerSet = new HashSet<>();
-                question.setAnswers(answerSet);
-                Answer correctAnswer = new Answer(parsedLine[1], true);
-                answerSet.add(correctAnswer);
-                answerSet.addAll(Arrays.stream(parsedLine).skip(2).map(s -> new Answer(s, false)).toList());
+                Question question = getQuestionFromCsvLine(csvLines.get(i));
                 questionList.add(question);
             }
             return questionList;
         } catch (IOException e) {
             throw new RuntimeException("Error during parsing csv file!", e);
         }
+    }
+
+    private static Question getQuestionFromCsvLine(String csvLine) {
+        String[] parsedLine = csvLine.split(DELIMITER);
+        Question question = new Question();
+        question.setValue(parsedLine[0]);
+        Set<Answer> answerSet = new HashSet<>();
+        question.setAnswers(answerSet);
+        Answer correctAnswer = new Answer(parsedLine[1], true);
+        answerSet.add(correctAnswer);
+        answerSet.addAll(Arrays.stream(parsedLine).skip(2).map(s -> new Answer(s, false)).toList());
+        setAnswersOrdinal(answerSet);
+        return question;
+    }
+
+    private static void setAnswersOrdinal(Set<Answer> answerSet) {
+        var ordinal = new int[]{1};
+        answerSet.forEach(answer -> answer.setOrdinal(ordinal[0]++));
     }
 
 }

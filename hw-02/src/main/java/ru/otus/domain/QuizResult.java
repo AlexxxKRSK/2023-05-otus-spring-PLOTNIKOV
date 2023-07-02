@@ -13,5 +13,7 @@ public class QuizResult {
 
     private Double attemptScore;
 
+    private Double passScore;
+
     private LocalDateTime attemptDateTime;
 }

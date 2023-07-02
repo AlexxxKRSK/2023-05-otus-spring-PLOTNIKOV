@@ -9,6 +9,7 @@ import ru.otus.domain.User;
 public class UserServiceImpl implements UserService {
 
     private final IOService ioService;
+
     @Override
     public User getUser() {
         var firstName = ioService.readStringWithPrompt("Enter user`s first name");
