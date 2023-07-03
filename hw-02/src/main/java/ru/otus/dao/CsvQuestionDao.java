@@ -40,7 +40,7 @@ public class CsvQuestionDao implements QuestionDao {
                 questionList.add(question);
             }
             return questionList;
-        } catch (IOException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             throw new RuntimeException("Error during parsing csv file!", e);
         }
     }
