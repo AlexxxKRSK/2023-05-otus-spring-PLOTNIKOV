@@ -12,6 +12,8 @@ public class CsvQuestionDaoTest {
 
     private static final String NON_EXISTS_FILE = "/no-such-file.csv";
 
+    private static final String WRONG_FORMAT_FILE = "/wrong-format.csv";
+
     @Test
     public void validFileTest() {
         var questionDao = new CsvQuestionDao(VALID_FILE);
@@ -24,5 +26,12 @@ public class CsvQuestionDaoTest {
         var questionDao = new CsvQuestionDao(NON_EXISTS_FILE);
         var ex = assertThrows(RuntimeException.class, questionDao::getQuestions);
         assertEquals(String.format("File %s not found in resources", NON_EXISTS_FILE), ex.getMessage());
+    }
+
+    @Test
+    public void wrongFormatFileTest() {
+        var questionDao = new CsvQuestionDao(WRONG_FORMAT_FILE);
+        var ex = assertThrows(RuntimeException.class, questionDao::getQuestions);
+        assertEquals("Error during parsing csv file!", ex.getMessage());
     }
 }
