@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.dao.QuestionDao;
 import ru.otus.domain.Question;
+import ru.otus.exception.FileNotPresentException;
+import ru.otus.exception.ParsingException;
 
 import java.util.List;
 
@@ -12,9 +14,19 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionDao questionDao;
 
+    private final I18nService i18nService;
+
     @Override
     public List<Question> getQuestions() {
-        return questionDao.getQuestions();
+        try {
+            return questionDao.getQuestions();
+        } catch (FileNotPresentException e) {
+            var fileNotFoundMsg = i18nService.getMessageByCode("file.not-found");
+            throw new RuntimeException(String.format(fileNotFoundMsg, e.getMessage()));
+        } catch (ParsingException e) {
+            var parsingErrorMSg = i18nService.getMessageByCode("file.parsing-error");
+            throw new RuntimeException(parsingErrorMSg, e);
+        }
     }
 
 }

@@ -12,6 +12,8 @@ public class AnswerServiceImpl implements AnswerService {
 
     private final IOService ioService;
 
+    private final I18nService i18nService;
+
     @Override
     public String getUserAnswerForQuestion(Question question) {
         String answer = null;
@@ -22,10 +24,12 @@ public class AnswerServiceImpl implements AnswerService {
                 if (answerOpt.isPresent()) {
                     answer = answerOpt.get().getValue();
                 } else {
-                    ioService.outputString("Wrong input. No answer with such number. Try again.");
+                    var noSuchNumberMsg = i18nService.getMessageByCode("input.no-such-number");
+                    ioService.outputString(noSuchNumberMsg);
                 }
             } catch (NumberFormatException e) {
-                ioService.outputString("Wrong input. Number expected. Try again.");
+                var notANumberMsg= i18nService.getMessageByCode("input.not-a-number");
+                ioService.outputString(notANumberMsg);
             }
         } while (Objects.equals(answer, null));
         return answer;

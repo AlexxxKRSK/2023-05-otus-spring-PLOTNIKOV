@@ -10,10 +10,14 @@ public class UserServiceImpl implements UserService {
 
     private final IOService ioService;
 
+    private final I18nService i18nService;
+
     @Override
     public User getUser() {
-        var firstName = ioService.readStringWithPrompt("Enter user`s first name");
-        var lastName = ioService.readStringWithPrompt("Enter user`s last name");
+        var getFirstNameMsg = i18nService.getMessageByCode("user.first-name");
+        var getLastNameMsg = i18nService.getMessageByCode("user.last-name");
+        var firstName = ioService.readStringWithPrompt(getFirstNameMsg);
+        var lastName = ioService.readStringWithPrompt(getLastNameMsg);
         return new User(firstName, lastName);
     }
 }

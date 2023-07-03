@@ -1,6 +1,8 @@
 package ru.otus.dao;
 
 import org.junit.jupiter.api.Test;
+import ru.otus.exception.FileNotPresentException;
+import ru.otus.exception.ParsingException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,14 +26,13 @@ public class CsvQuestionDaoTest {
     @Test
     public void emptyFileTest() {
         var questionDao = new CsvQuestionDao(NON_EXISTS_FILE);
-        var ex = assertThrows(RuntimeException.class, questionDao::getQuestions);
-        assertEquals(String.format("File %s not found in resources", NON_EXISTS_FILE), ex.getMessage());
+        var ex = assertThrows(FileNotPresentException.class, questionDao::getQuestions);
+        assertEquals(NON_EXISTS_FILE, ex.getMessage());
     }
 
     @Test
     public void wrongFormatFileTest() {
         var questionDao = new CsvQuestionDao(WRONG_FORMAT_FILE);
-        var ex = assertThrows(RuntimeException.class, questionDao::getQuestions);
-        assertEquals("Error during parsing csv file!", ex.getMessage());
+        assertThrows(ParsingException.class, questionDao::getQuestions);
     }
 }

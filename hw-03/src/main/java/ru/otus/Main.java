@@ -1,14 +1,11 @@
 package ru.otus;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import ru.otus.service.QuizRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@ComponentScan
+@SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        var ctx = new AnnotationConfigApplicationContext(Main.class);
-        QuizRunner quizRunner = ctx.getBean(QuizRunner.class);
-        quizRunner.runQuiz();
+        SpringApplication.run(Main.class, args);
     }
 }

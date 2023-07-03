@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
+import ru.otus.exception.FileNotPresentException;
+import ru.otus.exception.ParsingException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +24,12 @@ public class CsvQuestionDao implements QuestionDao {
 
     private final String questionsFilename;
 
-    public CsvQuestionDao(@Value("${app.config.questions-file-name}") String questionsFilename) {
+    public CsvQuestionDao(
+            @Value(
+                    "#{locale.language.equals('en') " +
+                            "? environment['app.config.questions-file-name'] " +
+                            ": environment['app.config.questions-file-name-ru']}"
+            ) String questionsFilename) {
         this.questionsFilename = questionsFilename;
     }
 
@@ -30,7 +37,7 @@ public class CsvQuestionDao implements QuestionDao {
     public List<Question> getQuestions() {
         var is = getClass().getResourceAsStream(questionsFilename);
         if (Objects.isNull(is)) {
-            throw new RuntimeException(String.format("File %s not found in resources", questionsFilename));
+            throw new FileNotPresentException(questionsFilename);
         }
         try (var reader = new BufferedReader(new InputStreamReader(is))) {
             List<String> csvLines = reader.lines().toList();
@@ -41,7 +48,7 @@ public class CsvQuestionDao implements QuestionDao {
             }
             return questionList;
         } catch (IOException | IndexOutOfBoundsException e) {
-            throw new RuntimeException("Error during parsing csv file!", e);
+            throw new ParsingException(e);
         }
     }
 

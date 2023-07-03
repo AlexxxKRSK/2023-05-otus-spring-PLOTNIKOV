@@ -1,7 +1,8 @@
 package ru.otus.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.stereotype.Component;
 import ru.otus.domain.Question;
 
@@ -21,8 +22,9 @@ public class QuizRunnerImpl implements QuizRunner {
 
     private final IOService ioService;
 
-    private final ConversionService conversionService;
+    private final ConfigurableConversionService conversionService;
 
+    @PostConstruct
     @Override
     public void runQuiz() {
         var user = userService.getUser();
