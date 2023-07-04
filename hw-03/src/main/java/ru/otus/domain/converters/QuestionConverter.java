@@ -6,7 +6,6 @@ import ru.otus.domain.Question;
 
 import java.util.Comparator;
 
-//@Component
 public class QuestionConverter implements Converter<Question, String> {
 
     @Override

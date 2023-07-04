@@ -2,11 +2,9 @@ package ru.otus.domain.converters;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 import ru.otus.domain.QuizResult;
 import ru.otus.service.I18nService;
 
-@Component
 @RequiredArgsConstructor
 public class ResultConverter implements Converter<QuizResult, String> {
 
