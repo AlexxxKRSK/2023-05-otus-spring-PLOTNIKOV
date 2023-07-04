@@ -28,7 +28,7 @@ public class AnswerServiceImpl implements AnswerService {
                     ioService.outputString(noSuchNumberMsg);
                 }
             } catch (NumberFormatException e) {
-                var notANumberMsg= i18nService.getMessageByCode("input.not-a-number");
+                var notANumberMsg = i18nService.getMessageByCode("input.not-a-number");
                 ioService.outputString(notANumberMsg);
             }
         } while (Objects.equals(answer, null));

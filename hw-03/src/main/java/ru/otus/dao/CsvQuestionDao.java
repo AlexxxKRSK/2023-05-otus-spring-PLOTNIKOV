@@ -1,11 +1,11 @@
 package ru.otus.dao;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.exception.FileNotPresentException;
 import ru.otus.exception.ParsingException;
+import ru.otus.service.I18nService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,21 +20,17 @@ import java.util.Objects;
 @Repository
 public class CsvQuestionDao implements QuestionDao {
 
-    private final static String DELIMITER = ";";
+    private static final String DELIMITER = ";";
 
-    private final String questionsFilename;
+    private final I18nService i18nService;
 
-    public CsvQuestionDao(
-            @Value(
-                    "#{locale.language.equals('en') " +
-                            "? environment['app.config.questions-file-name'] " +
-                            ": environment['app.config.questions-file-name-ru']}"
-            ) String questionsFilename) {
-        this.questionsFilename = questionsFilename;
+    public CsvQuestionDao(I18nService i18nService) {
+        this.i18nService = i18nService;
     }
 
     @Override
     public List<Question> getQuestions() {
+        String questionsFilename = i18nService.getMessageByCode("file.name");
         var is = getClass().getResourceAsStream(questionsFilename);
         if (Objects.isNull(is)) {
             throw new FileNotPresentException(questionsFilename);
