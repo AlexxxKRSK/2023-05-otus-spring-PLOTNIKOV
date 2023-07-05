@@ -3,19 +3,19 @@ package ru.otus.domain.converters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import ru.otus.domain.QuizResult;
-import ru.otus.service.I18nService;
+import ru.otus.utis.LocalizedMessageProvider;
 
 @RequiredArgsConstructor
 public class ResultConverter implements Converter<QuizResult, String> {
 
-    private final I18nService i18nService;
+    private final LocalizedMessageProvider localizedMessageProvider;
 
     @Override
     public String convert(QuizResult result) {
-        var passedMsg = i18nService.getMessageByCode("result.passed");
-        var failedMsg = i18nService.getMessageByCode("result.failed");
-        var userScoreMsg = i18nService.getMessageByCode("result.user-score");
-        var minScoreMsg = i18nService.getMessageByCode("result.min-score");
+        var passedMsg = localizedMessageProvider.getMessageByCode("result.passed");
+        var failedMsg = localizedMessageProvider.getMessageByCode("result.failed");
+        var userScoreMsg = localizedMessageProvider.getMessageByCode("result.user-score");
+        var minScoreMsg = localizedMessageProvider.getMessageByCode("result.min-score");
         var builder = new StringBuilder("\n");
         if (result.getAttemptScore() >= result.getPassScore()) {
             builder.append(passedMsg).append("\n");

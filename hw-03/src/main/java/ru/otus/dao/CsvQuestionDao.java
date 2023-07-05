@@ -5,7 +5,7 @@ import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.exception.FileNotPresentException;
 import ru.otus.exception.ParsingException;
-import ru.otus.service.I18nService;
+import ru.otus.utis.LocalizedMessageProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,15 +22,15 @@ public class CsvQuestionDao implements QuestionDao {
 
     private static final String DELIMITER = ";";
 
-    private final I18nService i18nService;
+    private final LocalizedMessageProvider localizedMessageProvider;
 
-    public CsvQuestionDao(I18nService i18nService) {
-        this.i18nService = i18nService;
+    public CsvQuestionDao(LocalizedMessageProvider localizedMessageProvider) {
+        this.localizedMessageProvider = localizedMessageProvider;
     }
 
     @Override
     public List<Question> getQuestions() {
-        String questionsFilename = i18nService.getMessageByCode("file.name");
+        String questionsFilename = localizedMessageProvider.getMessageByCode("file.name");
         var is = getClass().getResourceAsStream(questionsFilename);
         if (Objects.isNull(is)) {
             throw new FileNotPresentException(questionsFilename);

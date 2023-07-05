@@ -6,6 +6,7 @@ import ru.otus.dao.QuestionDao;
 import ru.otus.domain.Question;
 import ru.otus.exception.FileNotPresentException;
 import ru.otus.exception.ParsingException;
+import ru.otus.utis.LocalizedMessageProvider;
 
 import java.util.List;
 
@@ -14,17 +15,17 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionDao questionDao;
 
-    private final I18nService i18nService;
+    private final LocalizedMessageProvider localizedMessageProvider;
 
     @Override
     public List<Question> getQuestions() {
         try {
             return questionDao.getQuestions();
         } catch (FileNotPresentException e) {
-            var fileNotFoundMsg = i18nService.getMessageByCode("file.not-found");
+            var fileNotFoundMsg = localizedMessageProvider.getMessageByCode("file.not-found");
             throw new RuntimeException(String.format(fileNotFoundMsg, e.getMessage()));
         } catch (ParsingException e) {
-            var parsingErrorMSg = i18nService.getMessageByCode("file.parsing-error");
+            var parsingErrorMSg = localizedMessageProvider.getMessageByCode("file.parsing-error");
             throw new RuntimeException(parsingErrorMSg, e);
         }
     }
