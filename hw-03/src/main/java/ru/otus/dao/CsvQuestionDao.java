@@ -1,11 +1,12 @@
 package ru.otus.dao;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
 import ru.otus.exception.FileNotPresentException;
 import ru.otus.exception.ParsingException;
-import ru.otus.utis.LocalizedMessageProvider;
+import ru.otus.provider.QuestionFileNameProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,19 +19,16 @@ import java.util.Set;
 import java.util.Objects;
 
 @Repository
+@RequiredArgsConstructor
 public class CsvQuestionDao implements QuestionDao {
 
     private static final String DELIMITER = ";";
 
-    private final LocalizedMessageProvider localizedMessageProvider;
-
-    public CsvQuestionDao(LocalizedMessageProvider localizedMessageProvider) {
-        this.localizedMessageProvider = localizedMessageProvider;
-    }
+    private final QuestionFileNameProvider questionFileNameProvider;
 
     @Override
     public List<Question> getQuestions() {
-        String questionsFilename = localizedMessageProvider.getMessageByCode("file.name");
+        String questionsFilename = questionFileNameProvider.getQuestionsFileName();
         var is = getClass().getResourceAsStream(questionsFilename);
         if (Objects.isNull(is)) {
             throw new FileNotPresentException(questionsFilename);
