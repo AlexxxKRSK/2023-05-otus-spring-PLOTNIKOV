@@ -1,33 +1,25 @@
 package ru.otus.provider;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.otus.config.QuestionsFileConfig;
 
-import java.util.Objects;
-
+@RequiredArgsConstructor
 @Component
 public class QuestionFileNameProviderImpl implements QuestionFileNameProvider {
 
-    private static final String LANGUAGE_RU = "ru";
+    private static final String DEFAULT_LANGUAGE = "en";
 
     private final LocaleProvider localeProvider;
 
-    private final String fileNameRu;
-
-    private final String fileNameEn;
-
-    public QuestionFileNameProviderImpl(
-            LocaleProvider localeProvider,
-            @Value("${file.name-ru}") String fileNameRu,
-            @Value("${file.name}") String fileNameEn) {
-        this.localeProvider = localeProvider;
-        this.fileNameRu = fileNameRu;
-        this.fileNameEn = fileNameEn;
-    }
+    private final QuestionsFileConfig questionsFileConfig;
 
     @Override
     public String getQuestionsFileName() {
-        var locale = localeProvider.getLocale();
-        return Objects.equals(locale.getLanguage(), LANGUAGE_RU) ? fileNameRu : fileNameEn;
+        var localeLanguage = localeProvider.getLocale().getLanguage();
+        var languageToUse = questionsFileConfig.getLanguageToName().containsKey(localeLanguage)
+                ? localeLanguage
+                : DEFAULT_LANGUAGE;
+        return questionsFileConfig.getLanguageToName().get(languageToUse);
     }
 }
