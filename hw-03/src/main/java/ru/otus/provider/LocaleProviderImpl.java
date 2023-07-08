@@ -10,7 +10,7 @@ public class LocaleProviderImpl implements LocaleProvider {
 
     private final Locale locale;
 
-    public LocaleProviderImpl(@Value("${application.locale}") Locale locale) {
+    public LocaleProviderImpl(@Value("${application.locale:en_EN}") Locale locale) {
         this.locale = locale;
     }
 
