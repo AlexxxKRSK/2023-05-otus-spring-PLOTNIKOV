@@ -19,7 +19,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CsvQuestionDao implements QuestionDao {
 
-    private final static String DELIMITER = ";";
+    private static final String DELIMITER = ";";
 
     private final String questionsFilename;
 

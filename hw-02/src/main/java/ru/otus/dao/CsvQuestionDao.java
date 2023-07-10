@@ -18,7 +18,7 @@ import java.util.Objects;
 @Repository
 public class CsvQuestionDao implements QuestionDao {
 
-    private final static String DELIMITER = ";";
+    private static final String DELIMITER = ";";
 
     private final String questionsFilename;
 
