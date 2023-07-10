@@ -24,10 +24,10 @@ public class CsvQuestionDaoTest {
     private static final String WRONG_FORMAT_FILE = "/wrong-format.csv";
 
     @Mock
-    QuestionFileNameProvider questionFileNameProvider;
+    private QuestionFileNameProvider questionFileNameProvider;
 
     @InjectMocks
-    CsvQuestionDao questionDao;
+    private CsvQuestionDao questionDao;
 
     @Test
     public void validFileTest() {
