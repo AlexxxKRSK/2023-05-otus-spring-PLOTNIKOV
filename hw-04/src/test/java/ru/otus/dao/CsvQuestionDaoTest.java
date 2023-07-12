@@ -1,7 +1,7 @@
 package ru.otus.dao;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.exception.FileNotPresentException;
@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@RequiredArgsConstructor
 public class CsvQuestionDaoTest {
     private static final int QUESTIONS_COUNT = 5;
 
@@ -26,7 +25,8 @@ public class CsvQuestionDaoTest {
     @MockBean
     private QuestionFileNameProvider questionFileNameProvider;
 
-    private final CsvQuestionDao questionDao;
+    @Autowired
+    private QuestionDao questionDao;
 
     @Test
     public void validFileTest() {
