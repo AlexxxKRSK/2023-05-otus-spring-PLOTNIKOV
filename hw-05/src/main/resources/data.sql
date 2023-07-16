@@ -1,0 +1,1 @@
+INSERT INTO AUTHORS (FIRST_NAME, LAST_NAME) values ( 'Hans', 'Andersen' );
