@@ -7,7 +7,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class Author {
 
-    private String firstName;
+    private Long id;
 
-    private String lastName;
+    private String name;
+
+    public Author(String name) {
+        this.name = name;
+    }
 }

@@ -1,7 +1,8 @@
 package ru.otus.dao;
 
 
-import java.awt.print.Book;
+import ru.otus.domain.Book;
+
 import java.util.List;
 import java.util.Optional;
 

@@ -1,10 +1,10 @@
 package ru.otus.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Book {
 
     private Long id;
@@ -13,5 +13,16 @@ public class Book {
 
     private Author author;
 
-    private Jenre jenre;
+    private Genre genre;
+
+    public Book(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Book(String name, Author author, Genre genre) {
+        this.name = name;
+        this.author = author;
+        this.genre = genre;
+    }
 }
