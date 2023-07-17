@@ -1,10 +1,15 @@
 package ru.otus.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.otus.domain.Author;
 import ru.otus.domain.Book;
+import ru.otus.domain.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,18 +25,51 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public Book saveBook(Book book) {
-        return null;
+        var keyHolder = new GeneratedKeyHolder();
+        var params = new MapSqlParameterSource();
+        params.addValue("name", book.getName());
+        params.addValue("author_id", book.getAuthor().getId());
+        params.addValue("genre_id", book.getGenre().getId());
+        jdbc.update(
+                "INSERT INTO BOOKS (NAME, AUTHOR_ID, GENRE_ID) " +
+                        "VALUES (:name, :author_id, :genre_id)",
+                params,
+                keyHolder
+        );
+        book.setId((Long) keyHolder.getKey());
+        return book;
     }
 
     @Override
     public List<Book> getAllBooks() {
         return jdbc.getJdbcOperations().query(
-                "SELECT * FROM BOOKS", new BookMapper());
+                "SELECT b.ID, b.NAME, " +
+                        "a.ID as AUTHOR_ID, a.NAME as AUTHOR_NAME, " +
+                        "g.ID as GENRE_ID, g.NAME as GENRE_NAME " +
+                        "FROM BOOKS b " +
+                        "LEFT JOIN AUTHORS a on a.ID = b.AUTHOR_ID " +
+                        "LEFT JOIN GENRES g on g.ID = b.GENRE_ID", new BookMapper());
     }
 
     @Override
     public Optional<Book> getBookById(Long id) {
-        return Optional.empty();
+        try {
+            return Optional.ofNullable(
+                    jdbc.queryForObject(
+                            "SELECT b.ID, b.NAME, " +
+                                    "a.ID as AUTHOR_ID, a.NAME as AUTHOR_NAME, " +
+                                    "g.ID as GENRE_ID, g.NAME as GENRE_NAME " +
+                                    "FROM BOOKS b " +
+                                    "LEFT JOIN AUTHORS a on a.ID = b.AUTHOR_ID " +
+                                    "LEFT JOIN GENRES g on g.ID = b.GENRE_ID " +
+                                    "WHERE b.ID=:id",
+                            Map.of("id", id),
+                            new BookMapper()
+                    )
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -44,9 +82,20 @@ public class BookRepositoryImpl implements BookRepository {
 
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
+            var author = new Author(
+                    rs.getLong("AUTHOR_ID"),
+                    rs.getString("AUTHOR_NAME")
+            );
+            var genre = new Genre(
+                    rs.getLong("GENRE_ID"),
+                    rs.getString("GENRE_NAME")
+            );
+
             return new Book(
                     rs.getLong("ID"),
-                    rs.getString("NAME")
+                    rs.getString("NAME"),
+                    author,
+                    genre
             );
         }
     }
