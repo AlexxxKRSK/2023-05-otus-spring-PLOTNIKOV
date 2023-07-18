@@ -1,9 +1,13 @@
-package ru.otus.service;
+package ru.otus.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.dao.BookRepository;
 import ru.otus.domain.Book;
+import ru.otus.service.AuthorService;
+import ru.otus.service.BookService;
+import ru.otus.service.GenreService;
+import ru.otus.service.IOService;
 
 import java.util.List;
 
@@ -40,5 +44,17 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getBookById(Long id) {
         return bookRepository.getBookById(id).orElse(null);
+    }
+
+    @Override
+    public Book updateBook(Long id) {
+        var book = bookRepository.getBookById(id).orElseThrow(() -> new RuntimeException("No book with such id!"));
+        var bookName = ioService.readStringWithPrompt("Enter book name");
+        var author = authorService.getAuthor();
+        var genre = genreService.getGenre();
+        book.setName(bookName);
+        book.setAuthor(author);
+        book.setGenre(genre);
+        return bookRepository.updateBook(book);
     }
 }

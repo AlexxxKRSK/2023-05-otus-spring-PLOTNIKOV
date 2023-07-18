@@ -1,4 +1,4 @@
-package ru.otus.dao;
+package ru.otus.dao.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.otus.dao.BookRepository;
 import ru.otus.domain.Author;
 import ru.otus.domain.Book;
 import ru.otus.domain.Genre;
@@ -25,6 +26,9 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public Book saveBook(Book book) {
+        if (book.getId() != null) {
+            return updateBook(book);
+        }
         var keyHolder = new GeneratedKeyHolder();
         var params = new MapSqlParameterSource();
         params.addValue("name", book.getName());
@@ -41,8 +45,23 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
+    public Book updateBook(Book book) {
+        var params = Map.of(
+                "id", book.getId(),
+                "name", book.getName(),
+                "author_id", book.getAuthor().getId(),
+                "genre_id", book.getGenre().getId());
+        jdbc.update(
+                "UPDATE BOOKS SET NAME=:name, AUTHOR_ID=:author_id, GENRE_ID=:genre_id " +
+                        "WHERE ID=:id",
+                params
+        );
+        return book;
+    }
+
+    @Override
     public List<Book> getAllBooks() {
-        return jdbc.getJdbcOperations().query(
+        return jdbc.query(
                 "SELECT b.ID, b.NAME, " +
                         "a.ID as AUTHOR_ID, a.NAME as AUTHOR_NAME, " +
                         "g.ID as GENRE_ID, g.NAME as GENRE_NAME " +

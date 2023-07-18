@@ -5,7 +5,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.domain.Book;
-import ru.otus.service.BookServiceImpl;
+import ru.otus.service.impl.BookServiceImpl;
 
 import java.util.List;
 
@@ -33,5 +33,10 @@ public class BookController {
     @ShellMethod(value = "Delete book by id", key = "delete")
     public boolean deleteBookById(@ShellOption Long id) {
         return bookService.deleteBookById(id);
+    }
+
+    @ShellMethod(value = "Update book by id", key = "update")
+    public Book updateBookById(@ShellOption Long id) {
+        return bookService.updateBook(id);
     }
 }

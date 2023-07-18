@@ -10,6 +10,8 @@ public interface BookRepository {
 
     Book saveBook(Book book);
 
+    Book updateBook(Book book);
+
     List<Book> getAllBooks();
 
     Optional<Book> getBookById(Long id);

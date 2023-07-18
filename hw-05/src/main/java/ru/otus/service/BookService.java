@@ -13,4 +13,6 @@ public interface BookService {
     Book createBook();
 
     Book getBookById(Long id);
+
+    Book updateBook(Long id);
 }

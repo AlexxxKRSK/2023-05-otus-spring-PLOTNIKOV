@@ -1,4 +1,4 @@
-package ru.otus.dao;
+package ru.otus.dao.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.otus.dao.AuthorRepository;
 import ru.otus.domain.Author;
 
 import java.sql.ResultSet;

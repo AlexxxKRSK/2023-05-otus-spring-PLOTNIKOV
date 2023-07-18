@@ -15,11 +15,6 @@ public class Book {
 
     private Genre genre;
 
-    public Book(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public Book(String name, Author author, Genre genre) {
         this.name = name;
         this.author = author;
