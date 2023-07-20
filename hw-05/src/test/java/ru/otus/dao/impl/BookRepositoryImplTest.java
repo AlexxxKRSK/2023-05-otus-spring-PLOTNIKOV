@@ -41,12 +41,12 @@ class BookRepositoryImplTest {
         final String NEW_BOOK_NAME = "Updated book name";
         var bookToUpdate = BookProvider.getExistingBook();
         var actualBook = bookRepository.getBookById(bookToUpdate.getId());
-        assertThat(actualBook.get()).usingRecursiveComparison().isEqualTo(bookToUpdate);
+        assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(bookToUpdate);
 
         bookToUpdate.setName(NEW_BOOK_NAME);
         bookRepository.updateBook(bookToUpdate);
         actualBook = bookRepository.getBookById(bookToUpdate.getId());
-        assertThat(actualBook.get()).usingRecursiveComparison().isEqualTo(bookToUpdate);
+        assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(bookToUpdate);
     }
 
     @Test
@@ -60,7 +60,7 @@ class BookRepositoryImplTest {
     void getBookByIdTest() {
         var expectedBook = BookProvider.getExistingBook();
         var actualBook = bookRepository.getBookById(expectedBook.getId());
-        assertThat(actualBook.get()).usingRecursiveComparison().isEqualTo(expectedBook);
+        assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
     @Test

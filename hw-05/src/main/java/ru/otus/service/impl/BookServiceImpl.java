@@ -2,6 +2,7 @@ package ru.otus.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dao.BookRepository;
 import ru.otus.domain.Book;
 import ru.otus.service.AuthorService;
@@ -34,6 +35,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Book createBook() {
         var bookName = ioService.readStringWithPrompt("Enter book name");
         var author = authorService.getAuthor();
@@ -47,6 +49,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Book updateBook(Long id) {
         var book = bookRepository.getBookById(id).orElseThrow(() -> new RuntimeException("No book with such id!"));
         var bookName = ioService.readStringWithPrompt("Enter book name");
