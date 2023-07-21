@@ -4,5 +4,5 @@ import ru.otus.domain.Author;
 
 public interface AuthorService {
 
-    Author getAuthor();
+    Author getAuthorByName(String authorName);
 }

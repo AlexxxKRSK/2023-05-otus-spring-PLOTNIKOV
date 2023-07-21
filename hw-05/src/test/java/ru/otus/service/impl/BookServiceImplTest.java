@@ -8,7 +8,6 @@ import ru.otus.dao.BookRepository;
 import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
 import ru.otus.service.GenreService;
-import ru.otus.service.IOService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +20,6 @@ import static ru.otus.BookProvider.getExistingBook;
 
 @SpringBootTest
 class BookServiceImplTest {
-
-    @MockBean
-    private IOService ioService;
 
     @MockBean
     private AuthorService authorService;
@@ -59,11 +55,14 @@ class BookServiceImplTest {
         var testBook = getExistingBook();
         testBook.setId(null);
         var expectedBook = getExistingBook();
-        when(authorService.getAuthor()).thenReturn(testBook.getAuthor());
-        when(genreService.getGenre()).thenReturn(testBook.getGenre());
-        when(ioService.readStringWithPrompt("Enter book name")).thenReturn(testBook.getName());
+        when(authorService.getAuthorByName(testBook.getAuthor().getName())).thenReturn(testBook.getAuthor());
+        when(genreService.getGenreByName(testBook.getGenre().getName())).thenReturn(testBook.getGenre());
         when(bookRepository.saveBook(testBook)).thenReturn(expectedBook);
-        var resultBook = bookService.createBook();
+        var resultBook = bookService.createBook(
+                testBook.getName(),
+                testBook.getAuthor().getName(),
+                testBook.getGenre().getName()
+        );
 
         assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
@@ -88,11 +87,15 @@ class BookServiceImplTest {
         expectedBook.getGenre().setName(UPDATED_GENRE_NAME);
 
         when(bookRepository.getBookById(testBook.getId())).thenReturn(Optional.of(testBook));
-        when(authorService.getAuthor()).thenReturn(expectedBook.getAuthor());
-        when(genreService.getGenre()).thenReturn(expectedBook.getGenre());
-        when(ioService.readStringWithPrompt("Enter book name")).thenReturn(UPDATED_NAME);
+        when(authorService.getAuthorByName(expectedBook.getAuthor().getName())).thenReturn(expectedBook.getAuthor());
+        when(genreService.getGenreByName(expectedBook.getGenre().getName())).thenReturn(expectedBook.getGenre());
         when(bookRepository.updateBook(expectedBook)).thenReturn(expectedBook);
-        var resultBook = bookService.updateBook(testBook.getId());
+        var resultBook = bookService.updateBook(
+                testBook.getId(),
+                expectedBook.getName(),
+                expectedBook.getAuthor().getName(),
+                expectedBook.getGenre().getName()
+        );
 
         assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }

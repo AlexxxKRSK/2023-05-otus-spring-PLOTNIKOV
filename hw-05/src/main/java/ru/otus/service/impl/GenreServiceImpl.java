@@ -6,20 +6,16 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dao.GenreRepository;
 import ru.otus.domain.Genre;
 import ru.otus.service.GenreService;
-import ru.otus.service.IOService;
 
 @Service
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
 
-    private final IOService ioService;
-
     private final GenreRepository genreRepository;
 
     @Override
     @Transactional
-    public Genre getGenre() {
-        var genreName = ioService.readStringWithPrompt("Enter genre name");
+    public Genre getGenreByName(String genreName) {
         return genreRepository.getGenreByName(genreName).orElseGet(() -> createGenre(genreName));
     }
 

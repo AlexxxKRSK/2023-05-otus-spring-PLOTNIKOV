@@ -10,9 +10,9 @@ public interface BookService {
 
     boolean deleteBookById(Long id);
 
-    Book createBook();
+    Book createBook(String bookName, String authorName, String genreName);
 
     Book getBookById(Long id);
 
-    Book updateBook(Long id);
+    Book updateBook(Long id, String bookName, String authorName, String genreName);
 }

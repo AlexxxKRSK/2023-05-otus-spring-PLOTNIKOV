@@ -8,15 +8,12 @@ import ru.otus.domain.Book;
 import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
 import ru.otus.service.GenreService;
-import ru.otus.service.IOService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-
-    private final IOService ioService;
 
     private final BookRepository bookRepository;
 
@@ -36,10 +33,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book createBook() {
-        var bookName = ioService.readStringWithPrompt("Enter book name");
-        var author = authorService.getAuthor();
-        var genre = genreService.getGenre();
+    public Book createBook(String bookName, String authorName, String genreName) {
+        var author = authorService.getAuthorByName(authorName);
+        var genre = genreService.getGenreByName(genreName);
         return bookRepository.saveBook(new Book(bookName, author, genre));
     }
 
@@ -50,14 +46,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book updateBook(Long id) {
+    public Book updateBook(Long id, String bookName, String authorName, String genreName) {
         var book = bookRepository.getBookById(id).orElseThrow(() -> new RuntimeException("No book with such id!"));
-        var bookName = ioService.readStringWithPrompt("Enter book name");
-        var author = authorService.getAuthor();
-        var genre = genreService.getGenre();
         book.setName(bookName);
-        book.setAuthor(author);
-        book.setGenre(genre);
+        if (authorName != null) {
+            var author = authorService.getAuthorByName(authorName);
+            book.setAuthor(author);
+        }
+        if (genreName != null) {
+            var genre = genreService.getGenreByName(genreName);
+            book.setGenre(genre);
+        }
         return bookRepository.updateBook(book);
     }
 }

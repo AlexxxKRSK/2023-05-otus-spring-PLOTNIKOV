@@ -6,20 +6,16 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dao.AuthorRepository;
 import ru.otus.domain.Author;
 import ru.otus.service.AuthorService;
-import ru.otus.service.IOService;
 
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-    private final IOService ioService;
-
     private final AuthorRepository authorRepository;
 
     @Override
     @Transactional
-    public Author getAuthor() {
-        var authorName = ioService.readStringWithPrompt("Enter author name");
+    public Author getAuthorByName(String authorName) {
         return authorRepository.getAuthorByName(authorName).orElseGet(() -> createAuthor(authorName));
     }
 
