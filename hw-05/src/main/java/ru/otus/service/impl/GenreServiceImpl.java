@@ -15,7 +15,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public Genre getGenreByName(String genreName) {
+    public Genre getOrCreateGenreByName(String genreName) {
         return genreRepository.getGenreByName(genreName).orElseGet(() -> createGenre(genreName));
     }
 

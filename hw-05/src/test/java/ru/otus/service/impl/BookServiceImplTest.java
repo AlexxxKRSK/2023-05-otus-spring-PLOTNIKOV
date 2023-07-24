@@ -55,8 +55,8 @@ class BookServiceImplTest {
         var testBook = getExistingBook();
         testBook.setId(null);
         var expectedBook = getExistingBook();
-        when(authorService.getAuthorByName(testBook.getAuthor().getName())).thenReturn(testBook.getAuthor());
-        when(genreService.getGenreByName(testBook.getGenre().getName())).thenReturn(testBook.getGenre());
+        when(authorService.getOrCreateAuthorByName(testBook.getAuthor().getName())).thenReturn(testBook.getAuthor());
+        when(genreService.getOrCreateGenreByName(testBook.getGenre().getName())).thenReturn(testBook.getGenre());
         when(bookRepository.saveBook(testBook)).thenReturn(expectedBook);
         var resultBook = bookService.createBook(
                 testBook.getName(),
@@ -87,8 +87,8 @@ class BookServiceImplTest {
         expectedBook.getGenre().setName(UPDATED_GENRE_NAME);
 
         when(bookRepository.getBookById(testBook.getId())).thenReturn(Optional.of(testBook));
-        when(authorService.getAuthorByName(expectedBook.getAuthor().getName())).thenReturn(expectedBook.getAuthor());
-        when(genreService.getGenreByName(expectedBook.getGenre().getName())).thenReturn(expectedBook.getGenre());
+        when(authorService.getOrCreateAuthorByName(expectedBook.getAuthor().getName())).thenReturn(expectedBook.getAuthor());
+        when(genreService.getOrCreateGenreByName(expectedBook.getGenre().getName())).thenReturn(expectedBook.getGenre());
         when(bookRepository.updateBook(expectedBook)).thenReturn(expectedBook);
         var resultBook = bookService.updateBook(
                 testBook.getId(),

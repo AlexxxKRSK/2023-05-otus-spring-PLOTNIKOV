@@ -4,5 +4,5 @@ import ru.otus.domain.Genre;
 
 public interface GenreService {
 
-    Genre getGenreByName(String genreName);
+    Genre getOrCreateGenreByName(String genreName);
 }

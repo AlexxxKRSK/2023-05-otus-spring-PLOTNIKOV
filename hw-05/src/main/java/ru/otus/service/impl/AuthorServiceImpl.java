@@ -15,7 +15,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public Author getAuthorByName(String authorName) {
+    public Author getOrCreateAuthorByName(String authorName) {
         return authorRepository.getAuthorByName(authorName).orElseGet(() -> createAuthor(authorName));
     }
 

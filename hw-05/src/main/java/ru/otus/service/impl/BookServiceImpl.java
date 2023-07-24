@@ -34,8 +34,8 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book createBook(String bookName, String authorName, String genreName) {
-        var author = authorService.getAuthorByName(authorName);
-        var genre = genreService.getGenreByName(genreName);
+        var author = authorService.getOrCreateAuthorByName(authorName);
+        var genre = genreService.getOrCreateGenreByName(genreName);
         return bookRepository.saveBook(new Book(bookName, author, genre));
     }
 
@@ -50,11 +50,11 @@ public class BookServiceImpl implements BookService {
         var book = bookRepository.getBookById(id).orElseThrow(() -> new RuntimeException("No book with such id!"));
         book.setName(bookName);
         if (authorName != null) {
-            var author = authorService.getAuthorByName(authorName);
+            var author = authorService.getOrCreateAuthorByName(authorName);
             book.setAuthor(author);
         }
         if (genreName != null) {
-            var genre = genreService.getGenreByName(genreName);
+            var genre = genreService.getOrCreateGenreByName(genreName);
             book.setGenre(genre);
         }
         return bookRepository.updateBook(book);
