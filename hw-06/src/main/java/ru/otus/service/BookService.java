@@ -1,22 +1,18 @@
 package ru.otus.service;
 
-import ru.otus.domain.Book;
-
-import java.util.List;
-
 public interface BookService {
 
-    List<Book> getAllBooks();
+    String getAllBooksString();
 
     boolean deleteBookById(Long id);
 
-    Book createBook(String bookName, String authorName, String genreName);
+    String createBook(String bookName, String authorName, String genreName);
 
-    Book getBookById(Long id);
+    String getBookById(Long id);
 
-    Book updateBook(Long id, String bookName, String authorName, String genreName);
+    String updateBook(Long id, String bookName, String authorName, String genreName);
 
-    Book addComment(Long bookId, String commentText);
+    String addComment(Long bookId, String commentText);
 
-    Book deleteCommentFromBook(Long bookId, Long commentId);
+    boolean deleteCommentFromBook(Long bookId, Long commentId);
 }

@@ -31,8 +31,8 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public List<Comment> getCommentsByBookId(Long id) {
-        var query = em.createQuery("select b.commentList from Book b " +
-                "where b.id = :bookId", Comment.class);
+        var query = em.createQuery("select c from Comment c " +
+                "where c.book.id = :bookId", Comment.class);
         query.setParameter("bookId", id);
         return query.getResultList();
     }

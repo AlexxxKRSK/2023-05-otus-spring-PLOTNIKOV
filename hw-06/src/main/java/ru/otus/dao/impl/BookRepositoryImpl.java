@@ -33,8 +33,7 @@ public class BookRepositoryImpl implements BookRepository {
     public List<Book> getAllBooks() {
         var query = em.createQuery("select distinct b from Book b " +
                         "left join fetch b.author " +
-                        "left join fetch b.genre " +
-                        "left join fetch b.commentList",
+                        "left join fetch b.genre",
                 Book.class);
         return query.getResultList();
     }

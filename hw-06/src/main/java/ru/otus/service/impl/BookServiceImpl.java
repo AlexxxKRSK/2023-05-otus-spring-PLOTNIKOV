@@ -1,6 +1,7 @@
 package ru.otus.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dao.BookRepository;
@@ -11,8 +12,8 @@ import ru.otus.service.BookService;
 import ru.otus.service.GenreService;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +25,16 @@ public class BookServiceImpl implements BookService {
 
     private final GenreService genreService;
 
+    private final ConversionService conversionService;
+
     @Override
-    public List<Book> getAllBooks() {
-        return bookRepository.getAllBooks();
+    @Transactional(readOnly = true)
+    public String getAllBooksString() {
+        var books = bookRepository.getAllBooks();
+        return books
+                .stream()
+                .map(b -> conversionService.convert(b, String.class))
+                .collect(Collectors.joining("\n-------\n"));
     }
 
     @Transactional
@@ -37,21 +45,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book createBook(String bookName, String authorName, String genreName) {
+    public String createBook(String bookName, String authorName, String genreName) {
         var author = authorService.getOrCreateAuthorByName(authorName);
         var genre = genreService.getOrCreateGenreByName(genreName);
-        return bookRepository.saveBook(new Book(bookName, author, genre, Collections.emptyList()));
+        var savedBook = bookRepository.saveBook(new Book(bookName, author, genre, Collections.emptyList()));
+        return conversionService.convert(savedBook, String.class);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Book getBookById(Long id) {
-        return bookRepository.getBookById(id).orElse(null);
+    public String getBookById(Long id) {
+        var book = bookRepository.getBookById(id).orElse(null);
+        return conversionService.convert(book, String.class);
     }
 
     @Override
     @Transactional
-    public Book updateBook(Long id, String bookName, String authorName, String genreName) {
+    public String updateBook(Long id, String bookName, String authorName, String genreName) {
         var book = bookRepository.getBookById(id).orElseThrow(() -> new RuntimeException("No book with such id!"));
         book.setName(bookName);
         if (authorName != null && !authorName.isEmpty()) {
@@ -62,23 +72,23 @@ public class BookServiceImpl implements BookService {
             var genre = genreService.getOrCreateGenreByName(genreName);
             book.setGenre(genre);
         }
-        return book;
+        return conversionService.convert(book, String.class);
     }
 
     @Override
     @Transactional
-    public Book addComment(Long bookId, String commentText) {
+    public String addComment(Long bookId, String commentText) {
         var comment = new Comment(commentText);
         var book = bookRepository.getBookById(bookId).orElseThrow(() -> new RuntimeException("No book with such id!"));
         book.getCommentList().add(comment);
-        return book;
+        comment.setBook(book);
+        return conversionService.convert(book, String.class);
     }
 
     @Override
     @Transactional
-    public Book deleteCommentFromBook(Long bookId, Long commentId) {
+    public boolean deleteCommentFromBook(Long bookId, Long commentId) {
         var book = bookRepository.getBookById(bookId).orElseThrow(() -> new RuntimeException("No book with such id!"));
-        book.getCommentList().removeIf(c -> Objects.equals(commentId, c.getId()));
-        return book;
+        return book.getCommentList().removeIf(c -> Objects.equals(commentId, c.getId()));
     }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.convert.ConversionService;
 import ru.otus.dao.BookRepository;
 import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
@@ -12,14 +13,18 @@ import ru.otus.service.GenreService;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static ru.otus.BookProvider.getExistingBook;
 
 @SpringBootTest
 class BookServiceImplTest {
+
+    @Autowired
+    private ConversionService conversionService;
 
     @MockBean
     private AuthorService authorService;
@@ -37,8 +42,8 @@ class BookServiceImplTest {
     void getAllBooksTest() {
         var expectedBook = getExistingBook();
         when(bookRepository.getAllBooks()).thenReturn(List.of(expectedBook));
-        var books = bookService.getAllBooks();
-        assertThat(books).containsExactlyInAnyOrder(expectedBook);
+        var booksString = bookService.getAllBooksString();
+        assertEquals(conversionService.convert(expectedBook, String.class), booksString);
     }
 
     @Test
@@ -57,14 +62,14 @@ class BookServiceImplTest {
         var expectedBook = getExistingBook();
         when(authorService.getOrCreateAuthorByName(testBook.getAuthor().getName())).thenReturn(testBook.getAuthor());
         when(genreService.getOrCreateGenreByName(testBook.getGenre().getName())).thenReturn(testBook.getGenre());
-        when(bookRepository.saveBook(testBook)).thenReturn(expectedBook);
+        when(bookRepository.saveBook(any())).thenReturn(expectedBook);
         var resultBook = bookService.createBook(
                 testBook.getName(),
                 testBook.getAuthor().getName(),
                 testBook.getGenre().getName()
         );
 
-        assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        assertEquals(conversionService.convert(expectedBook, String.class), resultBook);
     }
 
     @Test
@@ -72,7 +77,7 @@ class BookServiceImplTest {
         var expectedBook = getExistingBook();
         when(bookRepository.getBookById(expectedBook.getId())).thenReturn(Optional.of(expectedBook));
         var resultBook = bookService.getBookById(expectedBook.getId());
-        assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        assertEquals(conversionService.convert(expectedBook, String.class), resultBook);
     }
 
     @Test
@@ -97,6 +102,6 @@ class BookServiceImplTest {
                 expectedBook.getGenre().getName()
         );
 
-        assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        assertEquals(conversionService.convert(expectedBook, String.class), resultBook);
     }
 }

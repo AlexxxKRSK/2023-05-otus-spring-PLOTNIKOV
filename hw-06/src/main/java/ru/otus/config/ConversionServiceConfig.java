@@ -7,6 +7,7 @@ import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import ru.otus.domain.converters.AuthorConverter;
 import ru.otus.domain.converters.BookConverter;
+import ru.otus.domain.converters.CommentConverter;
 import ru.otus.domain.converters.GenreConverter;
 
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class ConversionServiceConfig {
         conS.addConverter(new BookConverter());
         conS.addConverter(new AuthorConverter());
         conS.addConverter(new GenreConverter());
+        conS.addConverter(new CommentConverter());
         return conS;
     }
 

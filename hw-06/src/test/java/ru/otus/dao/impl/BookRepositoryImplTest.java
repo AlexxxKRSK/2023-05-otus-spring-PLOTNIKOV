@@ -29,16 +29,18 @@ class BookRepositoryImplTest {
     private BookRepositoryImpl bookRepository;
 
     @Autowired
-    TestEntityManager em;
+    private TestEntityManager em;
 
     @Test
     void saveBookTest() {
+        var comment = new Comment("TEST COMMENT");
         var bookToSave = new Book(
                 "NEW BOOK",
                 new Author("TEST AUTHOR 3"),
                 new Genre("TEST GENRE 3"),
-                List.of(new Comment("TEST COMMENT"))
+                List.of(comment)
         );
+        comment.setBook(bookToSave);
         var savedBook = bookRepository.saveBook(bookToSave);
         var actualBook = em.find(Book.class, savedBook.getId());
         assertThat(savedBook).usingRecursiveComparison().isEqualTo(actualBook);

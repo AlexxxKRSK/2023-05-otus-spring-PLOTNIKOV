@@ -12,14 +12,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -34,18 +36,18 @@ public class Book {
     private String name;
 
     @Fetch(FetchMode.JOIN)
-    @ManyToOne(targetEntity = Author.class, cascade = CascadeType.PERSIST)
+    @ManyToOne(targetEntity = Author.class, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID")
     private Author author;
 
     @Fetch(FetchMode.JOIN)
-    @ManyToOne(targetEntity = Genre.class, cascade = CascadeType.PERSIST)
+    @ManyToOne(targetEntity = Genre.class, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "GENRE_ID")
     private Genre genre;
 
-    @Fetch(FetchMode.JOIN)
-    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "BOOK_ID", nullable = false)
+    @Fetch(FetchMode.SUBSELECT)
+    @OneToMany(targetEntity = Comment.class, mappedBy = "book",
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Comment> commentList;
 
     public Book(String name, Author author, Genre genre, List<Comment> commentList) {
