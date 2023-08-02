@@ -6,13 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dao.BookRepository;
 import ru.otus.domain.Book;
-import ru.otus.domain.Comment;
 import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
 import ru.otus.service.GenreService;
 
 import java.util.Collections;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,20 +73,4 @@ public class BookServiceImpl implements BookService {
         return conversionService.convert(book, String.class);
     }
 
-    @Override
-    @Transactional
-    public String addComment(Long bookId, String commentText) {
-        var comment = new Comment(commentText);
-        var book = bookRepository.getBookById(bookId).orElseThrow(() -> new RuntimeException("No book with such id!"));
-        book.getCommentList().add(comment);
-        comment.setBook(book);
-        return conversionService.convert(book, String.class);
-    }
-
-    @Override
-    @Transactional
-    public boolean deleteCommentFromBook(Long bookId, Long commentId) {
-        var book = bookRepository.getBookById(bookId).orElseThrow(() -> new RuntimeException("No book with such id!"));
-        return book.getCommentList().removeIf(c -> Objects.equals(commentId, c.getId()));
-    }
 }

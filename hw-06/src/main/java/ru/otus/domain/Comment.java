@@ -33,7 +33,7 @@ public class Comment {
     private String text;
 
     @Fetch(FetchMode.JOIN)
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "BOOK_ID", nullable = false)
     private Book book;
 

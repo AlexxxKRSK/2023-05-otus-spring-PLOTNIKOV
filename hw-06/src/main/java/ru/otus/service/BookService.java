@@ -12,7 +12,4 @@ public interface BookService {
 
     String updateBook(Long id, String bookName, String authorName, String genreName);
 
-    String addComment(Long bookId, String commentText);
-
-    boolean deleteCommentFromBook(Long bookId, Long commentId);
 }

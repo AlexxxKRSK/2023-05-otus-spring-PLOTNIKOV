@@ -6,12 +6,15 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.service.BookService;
+import ru.otus.service.CommentService;
 
 @ShellComponent
 @RequiredArgsConstructor
 public class BookController {
 
     private final BookService bookService;
+
+    private final CommentService commentService;
 
     @ShellMethod(value = "Create book. Example: create book-name author-name genre-name", key = "create")
     public String createBook(
@@ -53,15 +56,14 @@ public class BookController {
     )
     public String addCommentToBook(@ShellOption @NonNull Long bookId,
                                    @ShellOption @NonNull String commentText) {
-        return bookService.addComment(bookId, commentText);
+        return commentService.addComment(bookId, commentText);
     }
 
     @ShellMethod(
             value = "Remove comment from book. Example: rm-comment book-id comment-id",
             key = "rm-comment"
     )
-    public boolean deleteCommentFromBook(@ShellOption @NonNull Long bookId,
-                                        @ShellOption @NonNull Long commentId) {
-        return bookService.deleteCommentFromBook(bookId, commentId);
+    public boolean deleteCommentById(@ShellOption @NonNull Long commentId) {
+        return commentService.deleteCommentById(commentId);
     }
 }

@@ -45,9 +45,9 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     @Override
     public boolean deleteCommentById(Long id) {
-        var bookOpt = getCommentById(id);
-        if (bookOpt.isPresent()) {
-            em.remove(bookOpt.get());
+        var commentOpt = getCommentById(id);
+        if (commentOpt.isPresent()) {
+            em.remove(commentOpt.get());
             return true;
         } else {
             return false;
