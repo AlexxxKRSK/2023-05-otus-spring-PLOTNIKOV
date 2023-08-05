@@ -1,9 +1,8 @@
-package ru.otus.dao;
+package ru.otus.repository;
 
 
 import ru.otus.domain.Comment;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository {
@@ -11,8 +10,6 @@ public interface CommentRepository {
     Comment saveComment(Comment comment);
 
     Comment updateComment(Comment Comment);
-
-    List<Comment> getCommentsByBookId(Long id);
 
     Optional<Comment> getCommentById(Long id);
 

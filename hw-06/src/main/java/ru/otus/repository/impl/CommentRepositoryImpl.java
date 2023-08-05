@@ -1,12 +1,11 @@
-package ru.otus.dao.impl;
+package ru.otus.repository.impl;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.otus.dao.CommentRepository;
 import ru.otus.domain.Comment;
+import ru.otus.repository.CommentRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,14 +26,6 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public Comment updateComment(Comment comment) {
         return em.merge(comment);
-    }
-
-    @Override
-    public List<Comment> getCommentsByBookId(Long id) {
-        var query = em.createQuery("select c from Comment c " +
-                "where c.book.id = :bookId", Comment.class);
-        query.setParameter("bookId", id);
-        return query.getResultList();
     }
 
     @Override

@@ -1,17 +1,18 @@
-package ru.otus.domain.converters;
+package ru.otus.dto.converters;
 
 import org.springframework.core.convert.converter.Converter;
-import ru.otus.domain.Author;
+import ru.otus.dto.CommentDto;
 
-public class AuthorConverter implements Converter<Author, String> {
+
+public class CommentDtoConverter implements Converter<CommentDto, String> {
 
     @Override
-    public String convert(Author source) {
+    public String convert(CommentDto source) {
         return
                 ("id: " +
                         source.getId() +
                         ", name: " +
-                        source.getName() +
+                        source.getText() +
                         "\n")
                         .trim();
     }

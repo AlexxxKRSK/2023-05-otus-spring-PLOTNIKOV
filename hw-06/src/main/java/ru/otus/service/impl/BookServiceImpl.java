@@ -1,17 +1,19 @@
 package ru.otus.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.dao.BookRepository;
 import ru.otus.domain.Book;
+import ru.otus.domain.mappers.BookMapper;
+import ru.otus.dto.BookDto;
+import ru.otus.dto.BookWithCommentDto;
+import ru.otus.repository.BookRepository;
 import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
 import ru.otus.service.GenreService;
 
 import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +25,15 @@ public class BookServiceImpl implements BookService {
 
     private final GenreService genreService;
 
-    private final ConversionService conversionService;
+    private final BookMapper bookMapper;
 
     @Override
     @Transactional(readOnly = true)
-    public String getAllBooksString() {
+    public List<BookDto> getAllBooks() {
         var books = bookRepository.getAllBooks();
-        return books
-                .stream()
-                .map(b -> conversionService.convert(b, String.class))
-                .collect(Collectors.joining("\n-------\n"));
+        return books.stream()
+                .map(bookMapper::toDto)
+                .toList();
     }
 
     @Transactional
@@ -43,23 +44,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public String createBook(String bookName, String authorName, String genreName) {
+    public BookDto createBook(String bookName, String authorName, String genreName) {
         var author = authorService.getOrCreateAuthorByName(authorName);
         var genre = genreService.getOrCreateGenreByName(genreName);
         var savedBook = bookRepository.saveBook(new Book(bookName, author, genre, Collections.emptyList()));
-        return conversionService.convert(savedBook, String.class);
+        return bookMapper.toDto(savedBook);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public String getBookById(Long id) {
+    public BookWithCommentDto getBookById(Long id) {
         var book = bookRepository.getBookById(id).orElse(null);
-        return conversionService.convert(book, String.class);
+        return bookMapper.toDtoWithComments(book);
     }
 
     @Override
     @Transactional
-    public String updateBook(Long id, String bookName, String authorName, String genreName) {
+    public BookWithCommentDto updateBook(Long id, String bookName, String authorName, String genreName) {
         var book = bookRepository.getBookById(id).orElseThrow(() -> new RuntimeException("No book with such id!"));
         book.setName(bookName);
         if (authorName != null && !authorName.isEmpty()) {
@@ -70,7 +71,7 @@ public class BookServiceImpl implements BookService {
             var genre = genreService.getOrCreateGenreByName(genreName);
             book.setGenre(genre);
         }
-        return conversionService.convert(book, String.class);
+        return bookMapper.toDtoWithComments(book);
     }
 
 }

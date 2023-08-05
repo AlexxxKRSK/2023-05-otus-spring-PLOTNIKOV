@@ -1,4 +1,4 @@
-package ru.otus.dao.impl;
+package ru.otus.repository.impl;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

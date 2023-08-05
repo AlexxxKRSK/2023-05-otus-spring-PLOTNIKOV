@@ -1,8 +1,10 @@
 package ru.otus.service;
 
+import ru.otus.dto.CommentDto;
+
 public interface CommentService {
 
-    String addComment(Long bookId, String commentText);
+    CommentDto addComment(Long bookId, String commentText);
 
     boolean deleteCommentById(Long commentId);
 

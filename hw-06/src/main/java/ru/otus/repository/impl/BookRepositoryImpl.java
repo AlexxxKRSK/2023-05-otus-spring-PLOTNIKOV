@@ -1,9 +1,9 @@
-package ru.otus.dao.impl;
+package ru.otus.repository.impl;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.otus.dao.BookRepository;
+import ru.otus.repository.BookRepository;
 import ru.otus.domain.Book;
 
 import java.util.List;

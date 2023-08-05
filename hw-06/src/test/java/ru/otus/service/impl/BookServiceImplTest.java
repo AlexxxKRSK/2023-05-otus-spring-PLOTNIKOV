@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.convert.ConversionService;
-import ru.otus.dao.BookRepository;
+import ru.otus.repository.BookRepository;
 import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
 import ru.otus.service.GenreService;
@@ -13,18 +12,15 @@ import ru.otus.service.GenreService;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ru.otus.BookProvider.getExistingBook;
+import static ru.otus.BookProvider.*;
 
 @SpringBootTest
 class BookServiceImplTest {
-
-    @Autowired
-    private ConversionService conversionService;
 
     @MockBean
     private AuthorService authorService;
@@ -41,14 +37,15 @@ class BookServiceImplTest {
     @Test
     void getAllBooksTest() {
         var expectedBook = getExistingBook();
+        var expectedResult = getExistingBookDto();
         when(bookRepository.getAllBooks()).thenReturn(List.of(expectedBook));
-        var booksString = bookService.getAllBooksString();
-        assertEquals(conversionService.convert(expectedBook, String.class), booksString);
+        var books = bookService.getAllBooks();
+        assertThat(books).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(expectedResult);
     }
 
     @Test
     void deleteBookByIdTest() {
-        var testBook = getExistingBook();
+        var testBook = getExistingBookDto();
         when(bookRepository.deleteBookById(testBook.getId())).thenReturn(true);
         var result = bookService.deleteBookById(testBook.getId());
         verify(bookRepository).deleteBookById(testBook.getId());
@@ -60,6 +57,7 @@ class BookServiceImplTest {
         var testBook = getExistingBook();
         testBook.setId(null);
         var expectedBook = getExistingBook();
+        var expectedResult = getExistingBookDto();
         when(authorService.getOrCreateAuthorByName(testBook.getAuthor().getName())).thenReturn(testBook.getAuthor());
         when(genreService.getOrCreateGenreByName(testBook.getGenre().getName())).thenReturn(testBook.getGenre());
         when(bookRepository.saveBook(any())).thenReturn(expectedBook);
@@ -69,15 +67,17 @@ class BookServiceImplTest {
                 testBook.getGenre().getName()
         );
 
-        assertEquals(conversionService.convert(expectedBook, String.class), resultBook);
+        assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
     void getBookById() {
-        var expectedBook = getExistingBook();
+        var expectedBook = getExistingBookWithComment();
+        var expectedResult = getExistingBookWithCommentDto();
         when(bookRepository.getBookById(expectedBook.getId())).thenReturn(Optional.of(expectedBook));
         var resultBook = bookService.getBookById(expectedBook.getId());
-        assertEquals(conversionService.convert(expectedBook, String.class), resultBook);
+
+        assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 
     @Test
@@ -85,8 +85,12 @@ class BookServiceImplTest {
         final String UPDATED_NAME = "Updated name";
         final String UPDATED_AUTHOR_NAME = "Updated author";
         final String UPDATED_GENRE_NAME = "Updated genre";
-        var testBook = getExistingBook();
-        var expectedBook = getExistingBook();
+        var testBook = getExistingBookWithComment();
+        var expectedResult = getExistingBookWithCommentDto();
+        expectedResult.setName(UPDATED_NAME);
+        expectedResult.setAuthor(UPDATED_AUTHOR_NAME);
+        expectedResult.setGenre(UPDATED_GENRE_NAME);
+        var expectedBook = getExistingBookWithComment();
         expectedBook.setName(UPDATED_NAME);
         expectedBook.getAuthor().setName(UPDATED_AUTHOR_NAME);
         expectedBook.getGenre().setName(UPDATED_GENRE_NAME);
@@ -102,6 +106,6 @@ class BookServiceImplTest {
                 expectedBook.getGenre().getName()
         );
 
-        assertEquals(conversionService.convert(expectedBook, String.class), resultBook);
+        assertThat(resultBook).usingRecursiveComparison().isEqualTo(expectedResult);
     }
 }

@@ -1,10 +1,10 @@
-package ru.otus.dao.impl;
+package ru.otus.repository.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.otus.dao.AuthorRepository;
+import ru.otus.repository.AuthorRepository;
 import ru.otus.domain.Author;
 
 import java.util.Optional;
