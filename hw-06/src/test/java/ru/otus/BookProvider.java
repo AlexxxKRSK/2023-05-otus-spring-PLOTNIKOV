@@ -8,7 +8,7 @@ import ru.otus.dto.BookDto;
 import ru.otus.dto.BookWithCommentDto;
 import ru.otus.dto.CommentDto;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookProvider {
@@ -24,7 +24,7 @@ public class BookProvider {
     public static Book getExistingBook() {
         var author = new Author(1L, AUTHOR_NAME);
         var genre = new Genre(1L, GENRE_NAME);
-        return new Book(1L, "TEST BOOK", author, genre, Collections.emptyList());
+        return new Book(1L, "TEST BOOK", author, genre, new ArrayList<>());
     }
 
     public static Book getExistingBookWithComment() {
@@ -45,7 +45,4 @@ public class BookProvider {
         return new BookWithCommentDto(1L, BOOK_NAME, AUTHOR_NAME, GENRE_NAME, List.of(comment));
     }
 
-    public static CommentDto getCommentDto() {
-        return new CommentDto(1L, COMMENT_TEXT);
-    }
 }
