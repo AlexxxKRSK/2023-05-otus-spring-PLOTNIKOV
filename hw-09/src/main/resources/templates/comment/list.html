@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .comments {
+            border: 1px solid steelblue;
+            width: 600px;
+            border-collapse: collapse;
+        }
+
+        .comments tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <a href="../index.html" th:href="@{/}">Main page</a>
+</div>
+<div>
+    <a href="../book/list.html" th:href="@{/list}">Books list</a>
+</div>
+<div>
+    <a href="edit.html" th:method="post" th:href="@{/comment/create(id=${book.id})}">Add comment</a>
+</div>
+
+<h3>Comments for book:
+    <div th:text="${book.name}">BookName</div>
+</h3>
+
+<table class="comments">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Text</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : ${book.commentList}">
+        <td th:text="${comment.id}">1</td>
+        <td th:text="${comment.text}">CommentText</td>
+        <td>
+            <div class="actions">
+                <form th:method="delete" th:action="@{/comment/delete/__${book.id}__(id=${comment.id})}">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
