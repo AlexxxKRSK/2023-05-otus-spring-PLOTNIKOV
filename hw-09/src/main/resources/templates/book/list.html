@@ -54,7 +54,7 @@
         <td>
             <div class="actions">
                 <a href="edit.html" th:href="@{/edit(id=${book.id})}">Edit</a>
-                <a href="comment/list.html" th:href="@{/comment-list(id=${book.id})}">Comments</a>
+                <a href="comment/list.html" th:href="@{/comment/list(id=${book.id})}">Comments</a>
                 <form th:method="delete" th:action="@{/delete(id=${book.id})}">
                     <button type="submit">Delete</button>
                 </form>

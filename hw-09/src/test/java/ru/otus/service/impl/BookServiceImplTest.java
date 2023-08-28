@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ru.otus.BookProvider.getExistingBook;
-import static ru.otus.BookProvider.getExistingBookDto;
-import static ru.otus.BookProvider.getExistingBookWithComment;
-import static ru.otus.BookProvider.getExistingBookWithCommentDto;
+import static ru.otus.TestDataProvider.getExistingBook;
+import static ru.otus.TestDataProvider.getExistingBookDto;
+import static ru.otus.TestDataProvider.getExistingBookWithComment;
+import static ru.otus.TestDataProvider.getExistingBookWithCommentDto;
 
 @SpringBootTest
 class BookServiceImplTest {

@@ -4,14 +4,12 @@ import ru.otus.domain.Author;
 import ru.otus.domain.Book;
 import ru.otus.domain.Comment;
 import ru.otus.domain.Genre;
-import ru.otus.dto.BookDto;
-import ru.otus.dto.BookWithCommentDto;
-import ru.otus.dto.CommentDto;
+import ru.otus.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookProvider {
+public class TestDataProvider {
 
     private static final String BOOK_NAME = "TEST BOOK";
 
@@ -51,6 +49,13 @@ public class BookProvider {
         return new BookWithCommentDto(1L, BOOK_NAME, AUTHOR_NAME, GENRE_NAME, List.of(comment));
     }
 
+    public static AuthorDto getExistingAuthorDto() {
+        return new AuthorDto(1L, AUTHOR_NAME);
+    }
+
+    public static GenreDto getExistingGenrerDto() {
+        return new GenreDto(1L, GENRE_NAME);
+    }
 
     public static BookDto getNewBookDto() {
         return new BookDto(null, NEW_BOOK_NAME, NEW_AUTHOR_NAME, NEW_GENRE_NAME);

@@ -6,8 +6,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
-import ru.otus.BookProvider;
+import ru.otus.TestDataProvider;
+import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
+import ru.otus.service.GenreService;
 
 import java.util.List;
 import java.util.Map;
@@ -23,21 +25,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookControllerTest {
 
     @MockBean
-    BookService bookService;
+    private BookService bookService;
+
+    @MockBean
+    private AuthorService authorService;
+
+    @MockBean
+    private GenreService genreService;
 
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @Test
     void createBookView() throws Exception {
+        when(authorService.getAllAuthors()).thenReturn(List.of(TestDataProvider.getExistingAuthorDto()));
+        when(genreService.getAllGenres()).thenReturn(List.of(TestDataProvider.getExistingGenrerDto()));
+
         mvc.perform(get("/create"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("book/create"));
+                .andExpect(view().name("book/create-edit"));
     }
 
     @Test
     void testCreateBook() throws Exception {
-        var dto = BookProvider.getNewBookDto();
+        var dto = TestDataProvider.getNewBookDto();
 
         when(bookService.createBook(any(), any(), any())).thenReturn(dto);
 
@@ -54,7 +65,7 @@ class BookControllerTest {
 
     @Test
     void getAllBooks() throws Exception {
-        var existingBooks = List.of(BookProvider.getExistingBookDto());
+        var existingBooks = List.of(TestDataProvider.getExistingBookDto());
         when(bookService.getAllBooks()).thenReturn(existingBooks);
 
         mvc.perform(get("/list"))
@@ -66,18 +77,20 @@ class BookControllerTest {
 
     @Test
     void editBookById() throws Exception {
-        var existingBook = BookProvider.getExistingBookWithCommentDto();
+        var existingBook = TestDataProvider.getExistingBookWithCommentDto();
         when(bookService.getBookById(existingBook.getId())).thenReturn(existingBook);
+        when(authorService.getAllAuthors()).thenReturn(List.of(TestDataProvider.getExistingAuthorDto()));
+        when(genreService.getAllGenres()).thenReturn(List.of(TestDataProvider.getExistingGenrerDto()));
 
         mvc.perform(get("/edit").param("id", String.valueOf(existingBook.getId())))
                 .andExpect(model().attributeExists("book"))
                 .andExpect(model().attribute("book", existingBook))
-                .andExpect(view().name("book/edit"));
+                .andExpect(view().name("book/create-edit"));
     }
 
     @Test
     void deleteBookById() throws Exception {
-        var existingBook = BookProvider.getExistingBook();
+        var existingBook = TestDataProvider.getExistingBook();
         mvc.perform(delete("/delete").param("id", String.valueOf(existingBook.getId())))
                 .andExpect(redirectedUrl("/list"));
 
@@ -86,7 +99,7 @@ class BookControllerTest {
 
     @Test
     void updateBook() throws Exception {
-        var dto = BookProvider.getExistingBookWithCommentDto();
+        var dto = TestDataProvider.getExistingBookWithCommentDto();
         String NEW_NAME = "NEW BOOK NAME";
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap(Map.of(
                 "id", List.of(String.valueOf(dto.getId())),
@@ -102,17 +115,4 @@ class BookControllerTest {
                 .updateBook(dto.getId(), NEW_NAME, dto.getAuthor(), dto.getGenre());
     }
 
-    @Test
-    void listCommentsByBookId() throws Exception {
-        var dto = BookProvider.getExistingBookWithCommentDto();
-
-        when(bookService.getBookById(dto.getId())).thenReturn(dto);
-
-        mvc.perform(get("/comment-list").param("id", String.valueOf(dto.getId())))
-                .andExpect(model().attributeExists("book"))
-                .andExpect(model().attribute("book", dto))
-                .andExpect(view().name("comment/list"));
-
-        verify(bookService, times(1)).getBookById(dto.getId());
-    }
 }

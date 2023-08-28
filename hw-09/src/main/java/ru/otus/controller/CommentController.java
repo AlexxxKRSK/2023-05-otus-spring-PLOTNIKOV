@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.otus.dto.BookDto;
+import ru.otus.service.BookService;
 import ru.otus.service.CommentService;
 
 @Controller
@@ -17,11 +19,13 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    private final BookService bookService;
+
     @PostMapping("comment/create")
     public String addCommentToBook(@RequestParam("bookId") @NonNull Long bookId,
                                    String text) {
         commentService.addComment(bookId, text);
-        return "redirect:/comment-list?id=" + bookId;
+        return "redirect:/comment/list?id=" + bookId;
     }
 
     @GetMapping("/comment/create")
@@ -34,6 +38,13 @@ public class CommentController {
     public String deleteCommentById(@PathVariable("book-id") Long bookId,
                                     @RequestParam("id") @NonNull Long commentId) {
         commentService.deleteCommentById(commentId);
-        return "redirect:/comment-list?id=" + bookId;
+        return "redirect:/comment/list?id=" + bookId;
+    }
+
+    @GetMapping("/comment/list")
+    public String listCommentsByBookId(@RequestParam(value = "id") Long id, Model model) {
+        BookDto dto = bookService.getBookById(id);
+        model.addAttribute("book", dto);
+        return "comment/list";
     }
 }

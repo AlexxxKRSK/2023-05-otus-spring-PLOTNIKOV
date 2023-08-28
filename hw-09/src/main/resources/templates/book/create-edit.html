@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${isEdit} ? 'Edit book' : 'Create book'"/>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="create-form" action="create.html"
+      th:object="${book}"
+      th:method="${isEdit} ? put : post"
+      th:action="${isEdit} ? @{/update(id=${book.id})} : @{/create}"
+>
+    <h3>Book:</h3>
+
+    <div class="row" th:if="${isEdit}">
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+    </div>
+
+    <div class="row">
+        <label for="book-name-input">Name:</label>
+        <input id="book-name-input" name="name" type="text" value="John Doe" th:value="*{name}"/>
+    </div>
+
+    <div class="row">
+        <label for="author-input">Author:</label>
+        <select id="author-input" name="author" th:selected="*{author}">
+            <option th:value="0" disabled selected>Select author</option>
+            <option th:each="author : ${authors}"
+                    th:selected="${author.name} == *{author}"
+                    th:value="${author.name}"
+                    th:text="${author.name}"/>
+        </select>
+        <a href="author/create.html" th:href="@{/author/create}">Create new</a>
+    </div>
+
+    <div class="row">
+        <label for="genre-input">Genre:</label>
+        <select id="genre-input" name="genre" th:type="text" th:selected="*{genre}">
+            <option th:value="0" disabled selected>Select genre</option>
+            <option th:each="genre : ${genres}"
+                    th:selected="${genre.name} == *{genre}"
+                    th:value="${genre.name}"
+                    th:text="${genre.name}"/>
+        </select>
+        <a href="genre/create.html" th:href="@{/genre/create}">Create new</a>
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+        <a href="list.html" th:href="@{/list}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+</body>
+</html>

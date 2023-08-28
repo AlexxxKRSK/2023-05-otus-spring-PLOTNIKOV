@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.dto.BookDto;
+import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
+import ru.otus.service.GenreService;
 
 import java.util.List;
 
@@ -19,9 +21,19 @@ public class BookController {
 
     private final BookService bookService;
 
+    private final AuthorService authorService;
+
+    private final GenreService genreService;
+
     @GetMapping("/create")
-    public String createBook() {
-        return "book/create";
+    public String createBook(Model model) {
+        var authors = authorService.getAllAuthors();
+        var genres = genreService.getAllGenres();
+        model.addAttribute("book", new BookDto());
+        model.addAttribute("authors", authors);
+        model.addAttribute("genres", genres);
+        model.addAttribute("isEdit", false);
+        return "book/create-edit";
     }
 
     @PostMapping("/create")
@@ -41,7 +53,12 @@ public class BookController {
     public String editBookById(@RequestParam(value = "id") Long id, Model model) {
         BookDto dto = bookService.getBookById(id);
         model.addAttribute("book", dto);
-        return "book/edit";
+        var authors = authorService.getAllAuthors();
+        var genres = genreService.getAllGenres();
+        model.addAttribute("authors", authors);
+        model.addAttribute("genres", genres);
+        model.addAttribute("isEdit", true);
+        return "book/create-edit";
     }
 
     @DeleteMapping("/delete")
@@ -56,10 +73,4 @@ public class BookController {
         return "redirect:/list";
     }
 
-    @GetMapping("/comment-list")
-    public String listCommentsByBookId(@RequestParam(value = "id") Long id, Model model) {
-        BookDto dto = bookService.getBookById(id);
-        model.addAttribute("book", dto);
-        return "comment/list";
-    }
 }
