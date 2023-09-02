@@ -1,28 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useContext} from 'react';
 import './App.css';
+import {
+  Box,
+  CssBaseline,
+  useTheme
+} from "@mui/material";
+import {Outlet} from "react-router-dom";
 import Header from "./component/Header";
+import DrawerHeader from "./component/DrawerHeader";
+import Main from "./component/Main"
+import SidePanel from "./component/SidePanel";
+import {observer} from "mobx-react";
+import StoreContext from "./store/StoreContext";
+
+const drawerWidth = 240;
 
 function App() {
+  const theme = useTheme();
+  const store = useContext(StoreContext);
+
   return (
     <div className="App">
-      <Header/>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"/>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Box sx={{display: 'flex'}}>
+        <CssBaseline/>
+        <Header/>
+        <SidePanel theme={theme}/>
+        <Main className="main" open={store.drawerOpen} width={drawerWidth}>
+          <DrawerHeader/>
+          <Outlet/>
+        </Main>
+      </Box>
     </div>
-  );
+  )
+    ;
 }
 
-export default App;
+export default observer(App);
