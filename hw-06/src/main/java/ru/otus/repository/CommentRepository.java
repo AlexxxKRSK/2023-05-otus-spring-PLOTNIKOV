@@ -9,7 +9,7 @@ public interface CommentRepository {
 
     Comment saveComment(Comment comment);
 
-    Comment updateComment(Comment Comment);
+    Comment updateComment(Comment comment);
 
     Optional<Comment> getCommentById(Long id);
 

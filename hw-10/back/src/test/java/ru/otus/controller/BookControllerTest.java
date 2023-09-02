@@ -1,50 +1,35 @@
 package ru.otus.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.LinkedMultiValueMap;
 import ru.otus.TestDataProvider;
-import ru.otus.service.AuthorService;
 import ru.otus.service.BookService;
-import ru.otus.service.GenreService;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BookController.class)
 class BookControllerTest {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     @MockBean
     private BookService bookService;
 
-    @MockBean
-    private AuthorService authorService;
-
-    @MockBean
-    private GenreService genreService;
-
     @Autowired
     private MockMvc mvc;
-
-    @Test
-    void createBookView() throws Exception {
-        when(authorService.getAllAuthors()).thenReturn(List.of(TestDataProvider.getExistingAuthorDto()));
-        when(genreService.getAllGenres()).thenReturn(List.of(TestDataProvider.getExistingGenrerDto()));
-
-        mvc.perform(get("/create"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("book/create-edit"));
-    }
 
     @Test
     void testCreateBook() throws Exception {
@@ -52,14 +37,13 @@ class BookControllerTest {
 
         when(bookService.createBook(any(), any(), any())).thenReturn(dto);
 
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap(Map.of(
-                "name", List.of(dto.getName()),
-                "author", List.of(dto.getAuthor()),
-                "genre", List.of(dto.getGenre())
-        ));
-        mvc.perform(post("/create").params(params))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/list"));
+        mvc.perform(post("/book/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(dto)))
+                .andExpect(content().contentType(APPLICATION_JSON));
+
         verify(bookService, times(1)).createBook(dto.getName(), dto.getAuthor(), dto.getGenre());
     }
 
@@ -68,48 +52,43 @@ class BookControllerTest {
         var existingBooks = List.of(TestDataProvider.getExistingBookDto());
         when(bookService.getAllBooks()).thenReturn(existingBooks);
 
-        mvc.perform(get("/list"))
+        mvc.perform(get("/book/list"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("books"))
-                .andExpect(model().attribute("books", existingBooks))
-                .andExpect(view().name("book/list"));
-    }
-
-    @Test
-    void editBookById() throws Exception {
-        var existingBook = TestDataProvider.getExistingBookWithCommentDto();
-        when(bookService.getBookById(existingBook.getId())).thenReturn(existingBook);
-        when(authorService.getAllAuthors()).thenReturn(List.of(TestDataProvider.getExistingAuthorDto()));
-        when(genreService.getAllGenres()).thenReturn(List.of(TestDataProvider.getExistingGenrerDto()));
-
-        mvc.perform(get("/edit").param("id", String.valueOf(existingBook.getId())))
-                .andExpect(model().attributeExists("book"))
-                .andExpect(model().attribute("book", existingBook))
-                .andExpect(view().name("book/create-edit"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(content().json(mapper.writeValueAsString(existingBooks)))
+                .andExpect(content().contentType(APPLICATION_JSON));
     }
 
     @Test
     void deleteBookById() throws Exception {
         var existingBook = TestDataProvider.getExistingBook();
-        mvc.perform(delete("/delete").param("id", String.valueOf(existingBook.getId())))
-                .andExpect(redirectedUrl("/list"));
+        when(bookService.deleteBookById(existingBook.getId())).thenReturn(Boolean.TRUE);
+
+        mvc.perform(delete(String.format("/book/%s/delete", existingBook.getId())))
+                .andExpect(status().isOk())
+                .andExpect(content().string(mapper.writeValueAsString(Boolean.TRUE)))
+                .andExpect(content().contentType(APPLICATION_JSON));
 
         verify(bookService, times(1)).deleteBookById(existingBook.getId());
     }
 
     @Test
     void updateBook() throws Exception {
+        var reqDto = TestDataProvider.getExistingBookDto();
+
         var dto = TestDataProvider.getExistingBookWithCommentDto();
         String NEW_NAME = "NEW BOOK NAME";
-        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap(Map.of(
-                "id", List.of(String.valueOf(dto.getId())),
-                "name", List.of(NEW_NAME),
-                "author", List.of(dto.getAuthor()),
-                "genre", List.of(dto.getGenre())
-        ));
+        reqDto.setName(NEW_NAME);
+        dto.setName(NEW_NAME);
 
-        mvc.perform(put("/update").params(params))
-                .andExpect(redirectedUrl("/list"));
+        when(bookService.updateBook(reqDto.getId(), reqDto.getName(), reqDto.getAuthor(), reqDto.getGenre())).thenReturn(dto);
+
+        mvc.perform(put("/book/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(reqDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(dto)))
+                .andExpect(content().contentType(APPLICATION_JSON));
 
         verify(bookService, times(1))
                 .updateBook(dto.getId(), NEW_NAME, dto.getAuthor(), dto.getGenre());
