@@ -20,13 +20,13 @@ public class AuthorController {
 
     private final AuthorMapper authorMapper;
 
-    @GetMapping("/author/list")
+    @GetMapping("/author")
     public ResponseEntity<List<AuthorDto>> getAuthorList() {
         return ResponseEntity.ok()
                 .body(authorService.getAllAuthors());
     }
 
-    @PostMapping("/author/create")
+    @PostMapping("/author")
     public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto dto) {
         var author = authorService.getOrCreateAuthorByName(dto.getName());
         return ResponseEntity.ok()

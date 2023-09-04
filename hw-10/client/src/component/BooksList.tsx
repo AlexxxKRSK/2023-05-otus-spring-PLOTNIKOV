@@ -30,16 +30,16 @@ const BooksList = () => {
   }, []);
 
   const queryBooks = () => {
-    queryService.getApi('/book/list')
+    queryService.getApi('/book')
       .then(resp => setBooks(resp));
   }
 
   const editBook = (book: Book) => {
-    nav(`/book/${book.id}/edit`);
+    nav(`/book/${book.id}`);
   }
 
   const deleteBook = (book: Book) => {
-    queryService.deleteApi(`/book/${book.id}/delete`)
+    queryService.deleteApi(`/book/${book.id}`)
       .then(queryBooks);
   }
 
@@ -48,7 +48,7 @@ const BooksList = () => {
   }
 
   function showBookCard(book: Book) {
-    queryService.getApi(`/book/${book.id}/get`)
+    queryService.getApi(`/book/${book.id}`)
       .then(resp => setSelectedBook(resp));
   }
 

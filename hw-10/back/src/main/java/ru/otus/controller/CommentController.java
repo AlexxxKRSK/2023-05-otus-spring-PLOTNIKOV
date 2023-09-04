@@ -19,20 +19,20 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("book/{book-id}/comment/create")
+    @PostMapping("book/{book-id}/comment")
     public ResponseEntity<CommentDto> createComment(@PathVariable("book-id") Long bookId,
                                                     @RequestBody CommentDto dto) {
         return ResponseEntity.ok()
                 .body(commentService.addComment(bookId, dto.getText()));
     }
 
-    @GetMapping("/book/{book-id}/comment/list")
+    @GetMapping("/book/{book-id}/comment")
     public ResponseEntity<List<CommentDto>> listCommentsByBookId(@PathVariable("book-id") Long bookId) {
         return ResponseEntity.ok()
                 .body(commentService.getAllCommentsByBookId(bookId));
     }
 
-    @DeleteMapping("/comment/{id}/delete")
+    @DeleteMapping("/comment/{id}")
     public ResponseEntity<Boolean> deleteCommentById(@PathVariable("id") Long commentId) {
         return ResponseEntity.ok()
                 .body(commentService.deleteCommentById(commentId));

@@ -23,10 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BookController.class)
 class BookControllerTest {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-
     @MockBean
     private BookService bookService;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     private MockMvc mvc;
@@ -37,7 +38,7 @@ class BookControllerTest {
 
         when(bookService.createBook(any(), any(), any())).thenReturn(dto);
 
-        mvc.perform(post("/book/create")
+        mvc.perform(post("/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -52,7 +53,7 @@ class BookControllerTest {
         var existingBooks = List.of(TestDataProvider.getExistingBookDto());
         when(bookService.getAllBooks()).thenReturn(existingBooks);
 
-        mvc.perform(get("/book/list"))
+        mvc.perform(get("/book"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(content().json(mapper.writeValueAsString(existingBooks)))
@@ -64,7 +65,7 @@ class BookControllerTest {
         var existingBook = TestDataProvider.getExistingBook();
         when(bookService.deleteBookById(existingBook.getId())).thenReturn(Boolean.TRUE);
 
-        mvc.perform(delete(String.format("/book/%s/delete", existingBook.getId())))
+        mvc.perform(delete(String.format("/book/%s", existingBook.getId())))
                 .andExpect(status().isOk())
                 .andExpect(content().string(mapper.writeValueAsString(Boolean.TRUE)))
                 .andExpect(content().contentType(APPLICATION_JSON));
@@ -83,7 +84,7 @@ class BookControllerTest {
 
         when(bookService.updateBook(reqDto.getId(), reqDto.getName(), reqDto.getAuthor(), reqDto.getGenre())).thenReturn(dto);
 
-        mvc.perform(put("/book/update")
+        mvc.perform(put("/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

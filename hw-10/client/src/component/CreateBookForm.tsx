@@ -13,17 +13,17 @@ const CreateBookForm = () => {
 
   useEffect(() => {
     if (bookId) {
-      queryService.getApi(`/book/${bookId}/get`)
+      queryService.getApi(`/book/${bookId}`)
         .then(resp => setBook(resp));
     }
-    queryService.getApi('/author/list')
+    queryService.getApi('/author')
       .then(resp => {
         setAuthors(resp);
         if (!book.author) {
           book.author = resp[0]?.name;
         }
       });
-    queryService.getApi('/genre/list')
+    queryService.getApi('/genre')
       .then(resp => {
         setGenres(resp);
         if (!book.genre) {
@@ -46,10 +46,10 @@ const CreateBookForm = () => {
 
   const createBook = () => {
     if (book.id) {
-      queryService.putApi(`/book/update`, book)
+      queryService.putApi(`/book`, book)
         .then(() => nav("/book/list"));
     } else {
-      queryService.postApi(`/book/create`, book)
+      queryService.postApi(`/book`, book)
         .then(() => nav("/book/list"));
     }
   }

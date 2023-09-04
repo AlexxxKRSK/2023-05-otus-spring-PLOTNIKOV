@@ -21,30 +21,30 @@ public class BookController {
 
     private final BookService bookService;
 
-    @PostMapping("/book/create")
+    @PostMapping("/book")
     public ResponseEntity<BookDto> createBook(@RequestBody BookDto dto) {
         return ResponseEntity.ok()
                 .body(bookService.createBook(dto.getName(), dto.getAuthor(), dto.getGenre()));
     }
 
-    @GetMapping("/book/list")
+    @GetMapping("/book")
     public ResponseEntity<List<BookDto>> getAllBooks() {
         return ResponseEntity.ok().body(bookService.getAllBooks());
     }
 
-    @GetMapping("/book/{book-id}/get")
+    @GetMapping("/book/{book-id}")
     public ResponseEntity<BookWithCommentDto> getBookById(@PathVariable("book-id") Long id) {
         return ResponseEntity.ok()
                 .body(bookService.getBookById(id));
     }
 
-    @DeleteMapping("/book/{book-id}/delete")
+    @DeleteMapping("/book/{book-id}")
     public ResponseEntity<Boolean> deleteBookById(@PathVariable("book-id") Long id) {
         return ResponseEntity.ok()
                 .body(bookService.deleteBookById(id));
     }
 
-    @PutMapping("/book/update")
+    @PutMapping("/book")
     public ResponseEntity<BookWithCommentDto> updateBook(@RequestBody BookDto dto) {
         return ResponseEntity.ok()
                 .body(bookService.updateBook(dto.getId(), dto.getName(), dto.getAuthor(), dto.getGenre()));
