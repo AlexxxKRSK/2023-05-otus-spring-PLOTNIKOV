@@ -1,7 +1,7 @@
 class QueryService {
 
-  public getApi(url: any) {
-    return fetch(url, {
+  public async getApi(url: any) {
+    return await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -10,8 +10,8 @@ class QueryService {
       .then(resp => resp.json());
   }
 
-  public postApi(url: any, body?: any) {
-    return fetch(url, {
+  public async postApi(url: any, body?: any) {
+    return await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -21,8 +21,8 @@ class QueryService {
       .then(resp => resp.json());
   }
 
-  public deleteApi(url: any, body?: any) {
-    return fetch(url, {
+  public async deleteApi(url: any, body?: any) {
+    return await fetch(url, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -32,8 +32,8 @@ class QueryService {
       .then(resp => resp.json());
   }
 
-  public putApi(url: any, body?: any) {
-    return fetch(url, {
+  public async putApi(url: any, body?: any) {
+    return await fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
