@@ -30,7 +30,7 @@ const CreateBookForm = () => {
           book.genre = resp[0]?.name;
         }
       });
-  });
+  }, []);
 
   const setBookName = (ev: any) => {
     setBook({...book, name: ev.target.value});
