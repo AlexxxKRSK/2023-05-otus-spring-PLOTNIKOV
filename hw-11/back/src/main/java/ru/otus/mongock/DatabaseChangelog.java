@@ -2,70 +2,119 @@ package ru.otus.mongock;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
+import com.mongodb.DBRef;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import ru.otus.domain.Author;
-import ru.otus.domain.Book;
-import ru.otus.domain.Comment;
-import ru.otus.domain.Genre;
-import ru.otus.repository.AuthorRepository;
-import ru.otus.repository.BookRepository;
-import ru.otus.repository.CommentRepository;
-import ru.otus.repository.GenreRepository;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @ChangeLog
 public class DatabaseChangelog {
 
-    private static final List<Genre> GENRES = List.of(
-            new Genre("Роман"),
-            new Genre("Фантастика")
-    );
+    private List<Document> authors;
 
-    private static final List<Author> AUTHORS = List.of(
-            new Author("Михаил Булгаков"),
-            new Author("Александр Пушкин"),
-            new Author("Лев Толстой")
-    );
+    private List<Document> genres;
+
+    private List<Document> books;
 
     @ChangeSet(order = "001", id = "dropDb", author = "plotnikov", runAlways = true)
     public void dropDb(MongoDatabase db) {
         db.drop();
     }
 
-    @ChangeSet(order = "002", id = "insert-authors", author = "plotnikov")
-    public void insertAuthors(AuthorRepository authorRepository) {
-        authorRepository.saveAll(AUTHORS).subscribe();
-    }
-
-    @ChangeSet(order = "003", id = "insert-genres", author = "plotnikov")
-    public void insertGenres(GenreRepository genreRepository) {
-        genreRepository.saveAll(GENRES).subscribe();
-    }
-
-    @ChangeSet(order = "004", id = "insert-books-and-comments", author = "plotnikov")
-    public void insertAuthors(BookRepository bookRepository, CommentRepository commentRepository) {
-        List<Book> books = List.of(
-                new Book("Мастер и Маргарита", AUTHORS.get(0), GENRES.get(1), new ArrayList<>()),
-                new Book("Евгений Онегин", AUTHORS.get(1), GENRES.get(0), new ArrayList<>()),
-                new Book("Война и мир", AUTHORS.get(2), GENRES.get(0), new ArrayList<>())
+    @ChangeSet(order = "002", id = "insert_authors", author = "plotnikov")
+    public void insertAuthors(MongoDatabase db) {
+        MongoCollection<Document> myCollection = db.getCollection("authors");
+        authors = List.of(
+                new Document()
+//                        .append("_id", 1)
+                        .append("name", "Михаил Булгаков"),
+                new Document()
+//                        .append("_id", 2)
+                        .append("name", "Александр Пушкин"),
+                new Document()
+//                        .append("_id", 3)
+                        .append("name", "Лев Толстой")
         );
-        bookRepository.saveAll(books).subscribe();
+        myCollection.insertMany(authors);
+    }
+
+    @ChangeSet(order = "003", id = "insert_genres", author = "plotnikov")
+    public void insertGenres(MongoDatabase db) {
+        MongoCollection<Document> myCollection = db.getCollection("genres");
+        genres = List.of(
+                new Document()
+//                        .append("_id", 1)
+                        .append("name", "Роман"),
+                new Document()
+//                        .append("_id", 2)
+                        .append("name", "Фантастика")
+        );
+        myCollection.insertMany(genres);
+    }
+
+    @ChangeSet(order = "004", id = "insert_books", author = "plotnikov")
+    public void insertBooks(MongoDatabase db) {
+        MongoCollection<Document> myCollection = db.getCollection("books");
+        books = List.of(
+                new Document()
+                        .append("name", "Мастер и Маргарита")
+                        .append("author", authors.get(0).get("_id"))
+                        .append("genre", genres.get(1).get("_id"))
+                        .append("commentList", "[]")
+                ,
+                new Document()
+                        .append("name", "Евгений Онегин")
+                        .append("author", authors.get(1).get("_id"))
+                        .append("genre", genres.get(0).get("_id"))
+                        .append("commentList", "[]"),
+                new Document()
+                        .append("name", "Война и мир")
+                        .append("author", authors.get(2).get("_id"))
+                        .append("genre", genres.get(0).get("_id"))
+                        .append("commentList", "[]")
+        );
+        myCollection.insertMany(books);
+    }
+
+    @ChangeSet(order = "005", id = "insert_comments", author = "plotnikov")
+    public void insertComments(MongoDatabase db) {
+        MongoCollection<Document> myCollection = db.getCollection("comments");
         var b0 = books.get(0);
-        var c1 = new Comment("Воланд есть несомненный главный герой произведения, ведь его образ – своего " +
-                "рода энергетический узел всей сложной композиционной структуры романа.", b0);
-        var c2 = new Comment("Сатана действует в мире лишь постольку, поскольку ему дозволяется " +
-                "то попущением Всевышнего.", b0);
-        b0.getCommentList().addAll(List.of(c1, c2));
         var b1 = books.get(1);
-        var c3 = new Comment("Иронический характер первых стихов и лирический вторых более или менее " +
-                "понятен всякому читателю", b1);
-        b1.getCommentList().add(c3);
-        commentRepository.save(c1).subscribe();
-//                .subscribe(r -> bookRepository.save(b0).subscribe());
-//        commentRepository.save(c2)
-//                .subscribe(r -> bookRepository.save(b1).subscribe());
+        var c1 = new Document()
+                .append("text", "Воланд есть несомненный главный герой произведения, ведь его образ – своего " +
+                        "рода энергетический узел всей сложной композиционной структуры романа.")
+                .append("book", b0.get("_id"));
+        var c2 =
+                new Document()
+                        .append("text", "Сатана действует в мире лишь постольку, поскольку ему дозволяется " +
+                                "то попущением Всевышнего.")
+                        .append("book", b0.get("_id"));
+        var c3 = new Document()
+                .append("text", "Иронический характер первых стихов и лирический вторых более или менее " +
+                        "понятен всякому читателю")
+                .append("book", b1.get("_id"));
+        var comments = List.of(c1, c2, c3);
+
+        myCollection.insertMany(comments);
+
+        MongoCollection<Document> booksCollection = db.getCollection("books");
+        b0.append("commentList",
+                List.of(
+                        new DBRef("comments", new ObjectId(c1.get("_id").toString())),
+                        new DBRef("comments", new ObjectId(c2.get("_id").toString()))
+                )
+        );
+        booksCollection.replaceOne(new Document().append("_id", b0.get("_id")), b0);
+        b1.append("commentList",
+                List.of(
+                        new DBRef("comments", new ObjectId(c3.get("_id").toString()))
+                )
+        );
+        booksCollection.replaceOne(new Document().append("_id", b1.get("_id")), b1);
 
     }
 }
