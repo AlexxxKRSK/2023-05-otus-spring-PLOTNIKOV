@@ -35,7 +35,7 @@ const BooksList = () => {
   }
 
   const editBook = (book: Book) => {
-    nav(`/book/${book.id}`);
+    nav(`/book/${book.id}/edit`);
   }
 
   const deleteBook = (book: Book) => {
