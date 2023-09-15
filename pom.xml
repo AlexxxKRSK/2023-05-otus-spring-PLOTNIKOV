@@ -34,6 +34,7 @@
         <module>hw-08</module>
         <module>hw-09</module>
         <module>hw-10/back</module>
+        <module>hw-11/back</module>
     </modules>
 
     <build>
