@@ -61,7 +61,7 @@ public class BookController {
 
     @DeleteMapping("/book/{book-id}")
     public Mono<Boolean> deleteBookById(@PathVariable("book-id") String id) {
-        return bookRepository.deleteBookById(id).map(i -> i ==1);
+        return bookRepository.deleteBookById(id).map(i -> i == 1);
     }
 
     @PutMapping("/book")

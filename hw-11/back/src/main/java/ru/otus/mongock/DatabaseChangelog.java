@@ -101,6 +101,13 @@ public class DatabaseChangelog {
 
         myCollection.insertMany(comments);
 
+        updateBooks(db, c1, c2, c3);
+
+    }
+
+    private void updateBooks(MongoDatabase db, Document c1, Document c2, Document c3) {
+        var b0 = books.get(0);
+        var b1 = books.get(1);
         MongoCollection<Document> booksCollection = db.getCollection("books");
         b0.append("commentList",
                 List.of(
@@ -115,6 +122,5 @@ public class DatabaseChangelog {
                 )
         );
         booksCollection.replaceOne(new Document().append("_id", b1.get("_id")), b1);
-
     }
 }
