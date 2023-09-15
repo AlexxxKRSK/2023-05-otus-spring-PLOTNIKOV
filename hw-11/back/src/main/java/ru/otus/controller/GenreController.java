@@ -21,12 +21,5 @@ public class GenreController {
         return genreRepository.findAll()
                 .map(genreMapper::toDto);
     }
-//
-//    @PostMapping("/genre")
-//    public ResponseEntity<GenreDto> createGenre(@RequestBody GenreDto dto) {
-//        var genre = genreService.getOrCreateGenreByName(dto.getName());
-//        return ResponseEntity.ok()
-//                .body(genreMapper.toDto(genre));
-//    }
 
 }

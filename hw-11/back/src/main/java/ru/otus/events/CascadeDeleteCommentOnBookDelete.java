@@ -17,6 +17,6 @@ private final CommentRepository commentRepository;
     public void onAfterDelete(AfterDeleteEvent<Book> event) {
         var bookId = event.getSource().get("_id").toString();
         super.onAfterDelete(event);
-        commentRepository.deleteCommentsByBookId(bookId);
+        commentRepository.deleteCommentsByBookId(bookId).subscribe();
     }
 }

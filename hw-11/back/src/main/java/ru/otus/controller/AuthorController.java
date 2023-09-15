@@ -22,12 +22,5 @@ public class AuthorController {
         return authorRepository.findAll()
                 .map(authorMapper::toDto);
     }
-//
-//    @PostMapping("/author")
-//    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto dto) {
-//        var author = authorService.getOrCreateAuthorByName(dto.getName());
-//        return ResponseEntity.ok()
-//                .body(authorMapper.toDto(author));
-//    }
 
 }
